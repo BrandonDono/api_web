@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import UsersPage from './pages/UsersPage';
+import CreateUserPage from './pages/CreateUserPage'; // Asegúrate de importarlo
+import EditUserPage from './pages/EditUserPage'; // Asegúrate de importarlo
+import DashboardPage from './pages/DashboardPage'; // Asegúrate de importarlo
+import { useAuth } from './hooks/useAuth';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { FaEdit } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
+import { FaEye } from 'react-icons/fa';
 
 function App() {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/users"
+          element={isAuthenticated ? <UsersPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/users/create"
+          element={isAuthenticated ? <CreateUserPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/users/edit/:id"
+          element={isAuthenticated ? <EditUserPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/dashboard/:id"
+          element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />}
+        />
+        <Route path="*" element={<Navigate to={isAuthenticated ? '/users' : '/login'} />} />
+      </Routes>
+    </Router>
   );
 }
 
